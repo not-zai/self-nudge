@@ -1,0 +1,22 @@
+{
+  "name": "self-nudge",
+  "version": "0.1.0",
+  "private": false,
+  "description": "自己给未来挂一个钟：到点把一句话投回自己的会话",
+  "type": "module",
+  "main": "nudge-consumer.mjs",
+  "bin": {
+    "nudge-write": "nudge-writer.mjs",
+    "nudge-daemon": "demo-daemon.mjs"
+  },
+  "scripts": {},
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "agent",
+    "automation"
+  ]
+}

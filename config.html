@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>self-nudge 配置</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 15px/1.6 system-ui, "Microsoft YaHei", sans-serif; max-width: 860px; margin: 40px auto; padding: 0 16px; }
+  h1 { font-size: 20px; margin-bottom: 4px; }
+  p.sub { color: #777; margin-top: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+  td { padding: 8px 6px; border-bottom: 1px solid #8883; vertical-align: top; }
+  td:nth-child(1) { width: 42%; }
+  td:nth-child(3) { width: 24%; color: #777; font-size: 12px; }
+  input[type=text], input[type=number] { width: 100%; padding: 6px 8px; font: inherit; }
+  .hint { font-size: 12px; color: #888; }
+  button { padding: 9px 18px; font: inherit; cursor: pointer; margin-right: 8px; }
+  pre { background: #8881; padding: 12px; overflow: auto; max-height: 260px; font-size: 13px; }
+  .bar { position: sticky; bottom: 0; padding: 14px 0; background: canvas; }
+</style>
+</head>
+<body>
+<h1>self-nudge 配置</h1>
+<p class="sub">填完点"导出 config.json"，放到本目录即可。页面不上传任何东西，纯本地。</p>
+<table>
+<tr><td><label for="f_stateDir">状态目录</label><div class="hint">self-nudge.json 与锁文件落这儿</div></td><td><input type="text" id="f_stateDir" step="any" value="./state"></td><td><code>stateDir</code></td></tr>
+<tr><td><label for="f_maxWhyChars">说明字数上限</label></td><td><input type="number" id="f_maxWhyChars" step="any" value="200"></td><td><code>maxWhyChars</code></td></tr>
+<tr><td><label for="f_tickSec">心跳间隔（秒）</label></td><td><input type="number" id="f_tickSec" step="any" value="60"></td><td><code>tickSec</code></td></tr>
+<tr><td><label for="f_takeOnePerTick">一拍只响一个钟</label></td><td><input type="checkbox" id="f_takeOnePerTick" checked></td><td><code>takeOnePerTick</code></td></tr>
+</table>
+<div class="bar">
+  <button onclick="preview()">预览</button>
+  <button onclick="download()">导出 config.json</button>
+  <button onclick="reset()">恢复默认</button>
+</div>
+<pre id="out">（点"预览"看结果）</pre>
+<script>
+const SPEC = [{"id":"f_stateDir","key":"stateDir","type":"text"},{"id":"f_maxWhyChars","key":"maxWhyChars","type":"number"},{"id":"f_tickSec","key":"tickSec","type":"number"},{"id":"f_takeOnePerTick","key":"takeOnePerTick","type":"checkbox"}];
+function setDeep(obj, key, val) {
+  const parts = key.split('.');
+  let cur = obj;
+  for (let i = 0; i < parts.length - 1; i++) { cur[parts[i]] = cur[parts[i]] || {}; cur = cur[parts[i]]; }
+  cur[parts[parts.length - 1]] = val;
+}
+function collect() {
+  const o = {};
+  for (const f of SPEC) {
+    const el = document.getElementById(f.id);
+    if (!el) continue;
+    let v;
+    if (f.type === 'checkbox') v = el.checked;
+    else if (f.type === 'list') v = el.value.split(/[,，]/).map((s) => s.trim()).filter(Boolean);
+    else if (f.type === 'number') { v = Number(el.value); if (!Number.isFinite(v)) continue; }
+    else { v = el.value; if (v === '') continue; }
+    setDeep(o, f.key, v);
+  }
+  return o;
+}
+function preview() { document.getElementById('out').textContent = JSON.stringify(collect(), null, 2) }
+function download() {
+  const text = JSON.stringify(collect(), null, 2) + '\n';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+  a.download = 'config.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function reset() { if (confirm('恢复成默认值？')) location.reload() }
+preview();
+</script>
+</body>
+</html>

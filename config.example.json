@@ -1,0 +1,15 @@
+{
+  "_说明": "把这份复制成 config.json。写手和消费者都读它（也可以用 --state / NUDGE_STATE_DIR 临时覆盖）。",
+
+  "stateDir": "./state",
+  "_stateDir": "self-nudge.json 与 .lock 落在这儿。默认 ./state，跟着仓库走，不写用户目录。",
+
+  "maxWhyChars": 200,
+  "_maxWhyChars": "一条钟的说明最多多少字（写手会截断）。",
+
+  "tickSec": 60,
+  "_tickSec": "消费者心跳间隔。钟的粒度是分钟级，60 秒足够；测试时可以调到 15。",
+
+  "takeOnePerTick": true,
+  "_takeOnePerTick": "true = 一拍只响一个钟（多个同分钟到点就分拍响）；false = 一次全响。"
+}
